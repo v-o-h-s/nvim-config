@@ -1,0 +1,88 @@
+return {
+  {
+    "akinsho/bufferline.nvim",
+    event = "VeryLazy",
+    keys = {
+      { "<leader>bp", "<cmd>BufferLineTogglePin<cr>",            desc = "Toggle Pin" },
+      { "<leader>bP", "<cmd>BufferLineGroupClose ungrouped<cr>", desc = "Delete Non-Pinned Buffers" },
+      { "<leader>br", "<cmd>BufferLineCloseRight<cr>",           desc = "Delete Buffers to the Right" },
+      { "<leader>bl", "<cmd>BufferLineCloseLeft<cr>",            desc = "Delete Buffers to the Left" },
+      { "<S-h>",      "<cmd>BufferLineCyclePrev<cr>",            desc = "Prev Buffer" },
+      { "<S-l>",      "<cmd>BufferLineCycleNext<cr>",            desc = "Next Buffer" },
+      { "[b",         "<cmd>BufferLineCyclePrev<cr>",            desc = "Prev Buffer" },
+      { "]b",         "<cmd>BufferLineCycleNext<cr>",            desc = "Next Buffer" },
+      { "[B",         "<cmd>BufferLineMovePrev<cr>",             desc = "Move Buffer Left" },
+      { "]B",         "<cmd>BufferLineMoveNext<cr>",             desc = "Move Buffer Right" },
+    },
+    opts = {
+      options = {
+        mode = "buffers",
+        themable = true,
+        numbers = "none",
+        close_command = function(n) require("mini.bufremove").delete(n, false) end,
+        right_mouse_command = function(n) require("mini.bufremove").delete(n, false) end,
+        diagnostics = "nvim_lsp",
+        diagnostics_update_in_insert = false,
+        diagnostics_indicator = function(_, _, diag)
+          local icons = { error = " ", warn = " ", hint = " ", info = " " }
+          local ret = (diag.error and icons.error .. diag.error .. " " or "")
+            .. (diag.warning and icons.warn .. diag.warning or "")
+          return vim.trim(ret)
+        end,
+        offsets = {
+          {
+            filetype = "neo-tree",
+            text = "Neo-tree",
+            highlight = "Directory",
+            text_align = "left",
+          },
+        },
+        show_buffer_close_icons = true,
+        show_close_icon = false,
+        color_icons = true,
+        separator_style = "slant",
+        enforce_regular_tabs = false,
+        always_show_bufferline = false,
+        hover = {
+          enabled = true,
+          delay = 200,
+          reveal = { "close" },
+        },
+      },
+      highlights = {
+        fill = { bg = "#11111b" },
+        background = { bg = "#181825", fg = "#6c7086" },
+        tab = { bg = "#181825", fg = "#6c7086" },
+        tab_selected = { bg = "#1e1e2e", fg = "#cdd6f4" },
+        buffer_visible = { bg = "#181825", fg = "#6c7086" },
+        buffer_selected = {
+          bg = "#1e1e2e",
+          fg = "#cdd6f4",
+          bold = true,
+          italic = false,
+        },
+        indicator_selected = { fg = "#cba6f7", bg = "#1e1e2e" },
+        separator = { fg = "#11111b", bg = "#181825" },
+        separator_selected = { fg = "#11111b", bg = "#1e1e2e" },
+        separator_visible = { fg = "#11111b", bg = "#181825" },
+        close_button = { bg = "#181825", fg = "#6c7086" },
+        close_button_selected = { bg = "#1e1e2e", fg = "#f38ba8" },
+        modified = { bg = "#181825", fg = "#fab387" },
+        modified_selected = { bg = "#1e1e2e", fg = "#fab387" },
+        diagnostic = { bg = "#181825" },
+        diagnostic_selected = { bg = "#1e1e2e" },
+        error = { bg = "#181825", fg = "#f38ba8" },
+        error_selected = { bg = "#1e1e2e", fg = "#f38ba8", bold = true },
+        warning = { bg = "#181825", fg = "#f9e2af" },
+        warning_selected = { bg = "#1e1e2e", fg = "#f9e2af", bold = true },
+        info = { bg = "#181825", fg = "#89b4fa" },
+        info_selected = { bg = "#1e1e2e", fg = "#89b4fa", bold = true },
+        hint = { bg = "#181825", fg = "#94e2d5" },
+        hint_selected = { bg = "#1e1e2e", fg = "#94e2d5", bold = true },
+        pick = { bg = "#181825", fg = "#cba6f7", bold = true },
+        pick_selected = { bg = "#1e1e2e", fg = "#cba6f7", bold = true },
+        offset_separator = { bg = "#11111b", fg = "#11111b" },
+      },
+    },
+  },
+}
