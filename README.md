@@ -8,7 +8,7 @@ I have been customizing it for a while, and this repository contains my personal
 
 Here are a few snapshots from my setup:
 
-https://github.com/user-attachments/assets/596cc4d1-c568-4fc3-9903-41a486fd24bc
-https://github.com/user-attachments/assets/26a94469-107d-438f-b3fe-7f6699ebfa56
-https://github.com/user-attachments/assets/a9db38ba-7f36-4b4e-b933-1a7c8e6a3516
-https://github.com/user-attachments/assets/b32a0cb0-cc31-4f38-92be-fb99df7903f1
+<img width="1919" height="1079" alt="Image" src="https://github.com/user-attachments/assets/f8eaac99-5caa-4649-a5ce-8a1cb9e01550" />
+<img width="1919" height="1079" alt="Image" src="https://github.com/user-attachments/assets/13778bf0-75b6-434d-855d-c0c078f2902e" />
+<img width="1919" height="1078" alt="Image" src="https://github.com/user-attachments/assets/d40f8c9f-2a30-4038-aacb-0d147659baa2" />
+<img width="1919" height="1079" alt="Image" src="https://github.com/user-attachments/assets/c79de54c-20c7-4a28-8875-09f19186e912" />
