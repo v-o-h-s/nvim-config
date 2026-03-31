@@ -2,12 +2,21 @@
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
--- Auto-save when leaving insert mode and on focus/exit
-vim.api.nvim_create_autocmd({ "InsertLeave", "FocusLost", "VimLeavePre" }, {
+-- Auto-save on any buffer change (insert or normal mode)
+vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "InsertLeave", "FocusLost", "VimLeavePre" }, {
+  group = vim.api.nvim_create_augroup("opencode_autosave", { clear = true }),
   pattern = "*",
-  callback = function()
-    if vim.bo.modified and vim.bo.buftype == "" and vim.fn.expand("%") ~= "" then
-      vim.cmd("silent! write")
+  callback = function(args)
+    local buf = args.buf
+    if not vim.api.nvim_buf_is_valid(buf) then
+      return
+    end
+
+    if vim.bo[buf].modified and vim.bo[buf].buftype == "" and vim.bo[buf].modifiable and not vim.bo[buf].readonly then
+      local name = vim.api.nvim_buf_get_name(buf)
+      if name ~= "" then
+        vim.cmd("silent! write")
+      end
     end
   end,
 })
