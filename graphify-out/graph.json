@@ -1,0 +1,184 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "init.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/init.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_init_lua",
+      "community": 1,
+      "norm_label": "init.lua"
+    },
+    {
+      "label": "copilot.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/copilot.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_plugins_copilot_lua",
+      "community": 2,
+      "norm_label": "copilot.lua"
+    },
+    {
+      "label": "formatting.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/formatting.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_plugins_formatting_lua",
+      "community": 3,
+      "norm_label": "formatting.lua"
+    },
+    {
+      "label": "toggleterm.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/toggleterm.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_plugins_toggleterm_lua",
+      "community": 4,
+      "norm_label": "toggleterm.lua"
+    },
+    {
+      "label": "comment.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/comment.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_plugins_comment_lua",
+      "community": 5,
+      "norm_label": "comment.lua"
+    },
+    {
+      "label": "lspsaga.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/lspsaga.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_plugins_lspsaga_lua",
+      "community": 6,
+      "norm_label": "lspsaga.lua"
+    },
+    {
+      "label": "git.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/git.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_plugins_git_lua",
+      "community": 7,
+      "norm_label": "git.lua"
+    },
+    {
+      "label": "opencode.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/opencode.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_plugins_opencode_lua",
+      "community": 0,
+      "norm_label": "opencode.lua"
+    },
+    {
+      "label": "set_opencode_highlights()",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/opencode.lua",
+      "source_location": "L1",
+      "id": "opencode_set_opencode_highlights",
+      "community": 0,
+      "norm_label": "set_opencode_highlights()"
+    },
+    {
+      "label": "tailwind.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/tailwind.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_plugins_tailwind_lua",
+      "community": 8,
+      "norm_label": "tailwind.lua"
+    },
+    {
+      "label": "bufferline.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/bufferline.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_plugins_bufferline_lua",
+      "community": 9,
+      "norm_label": "bufferline.lua"
+    },
+    {
+      "label": "catppuccin.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/catppuccin.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_plugins_catppuccin_lua",
+      "community": 10,
+      "norm_label": "catppuccin.lua"
+    },
+    {
+      "label": "gemini.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/gemini.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_plugins_gemini_lua",
+      "community": 11,
+      "norm_label": "gemini.lua"
+    },
+    {
+      "label": "diffview.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/diffview.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_plugins_diffview_lua",
+      "community": 12,
+      "norm_label": "diffview.lua"
+    },
+    {
+      "label": "options.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/config/options.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_config_options_lua",
+      "community": 13,
+      "norm_label": "options.lua"
+    },
+    {
+      "label": "keymaps.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/config/keymaps.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_config_keymaps_lua",
+      "community": 14,
+      "norm_label": "keymaps.lua"
+    },
+    {
+      "label": "autocmds.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/config/autocmds.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_config_autocmds_lua",
+      "community": 15,
+      "norm_label": "autocmds.lua"
+    },
+    {
+      "label": "lazy.lua",
+      "file_type": "code",
+      "source_file": "/home/gyro/.config/nvim/lua/config/lazy.lua",
+      "source_location": "L1",
+      "id": "home_gyro_config_nvim_lua_config_lazy_lua",
+      "community": 16,
+      "norm_label": "lazy.lua"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "/home/gyro/.config/nvim/lua/plugins/opencode.lua",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_src": "home_gyro_config_nvim_lua_plugins_opencode_lua",
+      "_tgt": "opencode_set_opencode_highlights",
+      "source": "home_gyro_config_nvim_lua_plugins_opencode_lua",
+      "target": "opencode_set_opencode_highlights",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": []
+}

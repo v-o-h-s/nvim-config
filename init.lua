@@ -4,6 +4,6 @@ require("config.lazy")
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
   callback = function()
-    vim.diagnostic.disable(0)
+    pcall(vim.diagnostic.disable, 0)
   end,
 })
