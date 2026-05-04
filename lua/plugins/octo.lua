@@ -5,12 +5,15 @@ return {
     "nvim-telescope/telescope.nvim",
     "sindrets/diffview.nvim",
   },
-  opts = {
-    enable_git_status = true,
-    default_to_clipboard = true,
-    picker = "telescope",
-    use_local_fs = true,
-  },
+  cmd = "Octo",
+  config = function()
+    require("octo").setup({
+      enable_git_status = true,
+      default_to_clipboard = true,
+      picker = "telescope",
+      use_local_fs = true,
+    })
+  end,
   keys = {
     { "<leader>go", "<cmd>Octo<cr>", desc = "Octo" },
     { "<leader>gpr", "<cmd>Octo pr list<cr>", desc = "PR list" },
