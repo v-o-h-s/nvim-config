@@ -6,6 +6,7 @@ return {
     "sindrets/diffview.nvim",
   },
   cmd = "Octo",
+  event = "VeryLazy",
   config = function()
     require("octo").setup({
       enable_git_status = true,
