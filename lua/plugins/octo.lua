@@ -16,7 +16,7 @@ return {
     })
   end,
   keys = {
-    { "<leader>go", "<cmd>Octo<cr>", desc = "Octo" },
+    { "<leader>go", "<cmd>Octo pr list<cr>", desc = "Octo" },
     { "<leader>gpr", "<cmd>Octo pr list<cr>", desc = "PR list" },
     { "<leader>gpc", "<cmd>Octo pr create<cr>", desc = "PR create" },
     { "<leader>gprv", "<cmd>Octo pr review<cr>", desc = "PR review" },
