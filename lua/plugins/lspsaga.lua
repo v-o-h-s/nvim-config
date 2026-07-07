@@ -62,7 +62,7 @@ return {
     keymap("n", "<leader>rn", "<Cmd>Lspsaga rename<CR>", { desc = "Rename" })
 
     -- Show outline
-    keymap("n", "<leader>o", "<Cmd>Lspsaga outline<CR>", { desc = "Outline" })
+    keymap("n", "<leader>lo", "<Cmd>Lspsaga outline<CR>", { desc = "Outline" })
 
     -- Scroll in hover/definition preview
     keymap("n", "<C-f>", "<Cmd>Lspsaga scroll_preview<CR>", { desc = "Scroll preview forward" })

@@ -3,6 +3,7 @@ return {
     "stevearc/conform.nvim",
     opts = {
       formatters_by_ft = {
+        cs          = { "csharpier" },
         javascript  = { "prettier" },
         typescript  = { "prettier" },
         jsx         = { "prettier" },

@@ -1,0 +1,310 @@
+-- Jupyter notebooks in Neovim:
+--   jupytext.nvim  — open .ipynb as markdown (round-trips on save)
+--   molten-nvim    — run cells against a Jupyter kernel, outputs inline
+--   image.nvim     — plots/images rendered in kitty
+--   quarto/otter   — LSP, completion & diagnostics inside code cells
+--
+-- Workflow: open a .ipynb → kernel auto-inits (falls back to picker via <localleader>mi)
+-- → <CR> runs the cell under the cursor, ]c/[c jump between cells.
+-- All notebook keymaps live under <localleader> (default: \)
+
+-- Cell navigation over ```python fences
+local function goto_cell(dir)
+  return function()
+    vim.fn.search("^```python", dir == "prev" and "bW" or "W")
+  end
+end
+
+return {
+  {
+    "3rd/image.nvim",
+    build = false, -- use ImageMagick CLI, no luarocks needed
+    opts = {
+      processor = "magick_cli",
+      integrations = {
+        markdown = {
+          enabled = true,
+          only_render_image_at_cursor = true,
+          filetypes = { "markdown", "quarto" },
+        },
+      },
+      max_width = 100,
+      max_height = 12,
+      max_height_window_percentage = math.huge,
+      max_width_window_percentage = math.huge,
+      window_overlap_clear_enabled = true,
+      window_overlap_clear_ft_ignore = { "cmp_menu", "cmp_docs", "snacks_notif" },
+    },
+  },
+
+  {
+    "GCBallesteros/jupytext.nvim",
+    lazy = false, -- must be loaded before an .ipynb is read
+    config = function()
+      require("jupytext").setup({
+        style = "markdown",
+        output_extension = "md",
+        force_ft = "markdown",
+      })
+      -- upstream also crashes on 0-byte .ipynb (d2l-en ships empty placeholders);
+      -- seed those with a valid blank notebook before jupytext reads them
+      local blank_nb = vim.json.encode({
+        cells = { { cell_type = "code", execution_count = vim.NIL, metadata = vim.empty_dict(), outputs = {}, source = {} } },
+        metadata = {
+          kernelspec = { display_name = "Python 3", language = "python", name = "python3" },
+          language_info = { name = "python" },
+        },
+        nbformat = 4,
+        nbformat_minor = 5,
+      })
+      local orig = vim.api.nvim_get_autocmds({ group = "jupytext-nvim", event = "BufReadCmd" })[1]
+      if orig and orig.callback then
+        vim.api.nvim_del_autocmd(orig.id)
+        vim.api.nvim_create_autocmd("BufReadCmd", {
+          group = vim.api.nvim_create_augroup("jupytext_empty_fix", { clear = true }),
+          pattern = "*.ipynb",
+          callback = function(ev)
+            if vim.fn.filereadable(ev.file) == 1 and vim.fn.getfsize(ev.file) <= 2 then
+              local f = assert(io.open(ev.file, "w"))
+              f:write(blank_nb)
+              f:close()
+              vim.notify("Empty notebook seeded with blank python3 skeleton", vim.log.levels.INFO)
+            end
+            local ok, err = pcall(orig.callback, ev)
+            if not ok then
+              -- a failed read means no jupytext write-hook: a plain :w would
+              -- clobber the .ipynb with raw markdown. Lock the buffer instead.
+              vim.bo[ev.buf].readonly = true
+              vim.bo[ev.buf].modifiable = false
+              vim.notify("jupytext could not read this notebook — buffer locked read-only to protect the file:\n" .. tostring(err), vim.log.levels.ERROR)
+            end
+          end,
+        })
+      end
+
+      -- upstream crashes on notebooks without metadata.kernelspec (e.g. d2l-en);
+      -- fall back to language_info, then assume python
+      local utils = require("jupytext.utils")
+      local extensions = { python = "py", julia = "jl", r = "r", R = "r", bash = "sh" }
+      utils.get_ipynb_metadata = function(filename)
+        local ok, decoded = pcall(function()
+          return vim.json.decode(io.open(filename, "r"):read("a")).metadata
+        end)
+        local meta = ok and decoded or {}
+        local spec = meta.kernelspec or {}
+        local language = spec.language
+          or (spec.name == "python3" and "python")
+          or (meta.language_info or {}).name
+          or "python"
+        return { language = language, extension = extensions[language] or "py" }
+      end
+    end,
+  },
+
+  {
+    "benlubas/molten-nvim",
+    version = "^1.0.0",
+    lazy = false, -- autocmds below must exist before the first .ipynb is opened
+    dependencies = { "3rd/image.nvim" },
+    build = ":UpdateRemotePlugins",
+    init = function()
+      vim.g.molten_image_provider = "image.nvim"
+      vim.g.molten_output_win_max_height = 20
+      vim.g.molten_auto_open_output = false
+      vim.g.molten_wrap_output = true
+      vim.g.molten_virt_text_output = true -- outputs shown as virtual text below the cell
+      vim.g.molten_virt_lines_off_by_1 = true
+      vim.g.molten_tick_rate = 200
+    end,
+    keys = {
+      { "<localleader>mi", ":MoltenInit<CR>", desc = "Init kernel", silent = true },
+      { "<localleader>mr", ":MoltenRestart!<CR>", desc = "Restart kernel", silent = true },
+      { "<localleader>mx", ":MoltenInterrupt<CR>", desc = "Interrupt kernel", silent = true },
+      { "<localleader>md", ":MoltenDelete<CR>", desc = "Delete cell output", silent = true },
+      { "<localleader>mo", ":noautocmd MoltenEnterOutput<CR>", desc = "Enter output window", silent = true },
+      { "<localleader>mh", ":MoltenHideOutput<CR>", desc = "Hide output", silent = true },
+      { "<localleader>r", ":<C-u>MoltenEvaluateVisual<CR>gv", mode = "v", desc = "Run selection", silent = true },
+    },
+    config = function()
+      local function molten_running()
+        local ok, status = pcall(require, "molten.status")
+        if not ok then
+          return false
+        end
+        local ok_init, res = pcall(status.initialized)
+        return ok_init and res == "Molten"
+      end
+
+      -- auto-init: pick the notebook's own kernel, else an active-venv kernel, else ask
+      local function molten_init_for(bufnr)
+        if molten_running() then
+          return true
+        end
+        local kernels = vim.fn.MoltenAvailableKernels()
+        local kernel
+        local file = vim.api.nvim_buf_get_name(bufnr)
+        if file:match("%.ipynb$") then
+          local ok, meta = pcall(function()
+            return vim.json.decode(io.open(file, "r"):read("a")).metadata.kernelspec.name
+          end)
+          if ok and vim.tbl_contains(kernels, meta) then
+            kernel = meta
+          end
+        end
+        if not kernel then
+          local venv = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
+          local name = venv and venv:match("/.+/(.+)")
+          if name and vim.tbl_contains(kernels, name) then
+            kernel = name
+          end
+        end
+        if kernel then
+          vim.cmd(("MoltenInit %s"):format(kernel))
+          return true
+        end
+        return false
+      end
+
+      local group = vim.api.nvim_create_augroup("molten_notebook", { clear = true })
+
+      -- opening a notebook: init kernel + pull saved outputs back in
+      vim.api.nvim_create_autocmd("BufEnter", {
+        group = group,
+        pattern = "*.ipynb",
+        callback = function(e)
+          vim.schedule(function()
+            if molten_init_for(e.buf) then
+              pcall(vim.cmd, "MoltenImportOutput")
+            end
+          end)
+        end,
+      })
+
+      -- saving a notebook: persist outputs into the .ipynb
+      vim.api.nvim_create_autocmd("BufWritePost", {
+        group = group,
+        pattern = "*.ipynb",
+        callback = function()
+          if molten_running() then
+            pcall(vim.cmd, "MoltenExportOutput!")
+          end
+        end,
+      })
+
+      -- :NewNotebook foo — create foo.ipynb with valid metadata and open it
+      vim.api.nvim_create_user_command("NewNotebook", function(cmd)
+        local path = cmd.args
+        if not path:match("%.ipynb$") then
+          path = path .. ".ipynb"
+        end
+        local nb = vim.json.encode({
+          cells = { { cell_type = "code", execution_count = vim.NIL, metadata = vim.empty_dict(), outputs = {}, source = {} } },
+          metadata = {
+            kernelspec = { display_name = "Python 3", language = "python", name = "python3" },
+            language_info = { name = "python" },
+          },
+          nbformat = 4,
+          nbformat_minor = 5,
+        })
+        local f = assert(io.open(path, "w"))
+        f:write(nb)
+        f:close()
+        vim.cmd.edit(path)
+      end, { nargs = 1, complete = "file", desc = "Create a new .ipynb notebook" })
+    end,
+  },
+
+  {
+    "quarto-dev/quarto-nvim",
+    dependencies = { "jmbuhr/otter.nvim", "nvim-treesitter/nvim-treesitter" },
+    ft = { "quarto", "markdown" },
+    opts = {
+      lspFeatures = {
+        enabled = true,
+        languages = { "python" },
+        chunks = "all",
+        diagnostics = { enabled = true, triggers = { "BufWritePost" } },
+        completion = { enabled = true },
+      },
+      codeRunner = {
+        enabled = true,
+        default_method = "molten",
+      },
+    },
+    config = function(_, opts)
+      require("quarto").setup(opts)
+      -- quarto only auto-activates for .qmd; notebooks are markdown buffers named *.ipynb
+      local function activate_if_notebook(buf)
+        if vim.api.nvim_buf_get_name(buf):match("%.ipynb$") then
+          require("quarto").activate()
+        end
+      end
+      vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("quarto_notebook", { clear = true }),
+        pattern = "markdown",
+        callback = function(e)
+          activate_if_notebook(e.buf)
+        end,
+      })
+      activate_if_notebook(vim.api.nvim_get_current_buf())
+    end,
+    keys = {
+      {
+        "<CR>",
+        function()
+          -- only hijack <CR> in real notebooks, not plain markdown
+          if vim.bo.filetype == "quarto" or vim.api.nvim_buf_get_name(0):match("%.ipynb$") then
+            require("quarto.runner").run_cell()
+          else
+            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<CR>", true, false, true), "n", false)
+          end
+        end,
+        desc = "Run cell",
+        ft = { "markdown", "quarto" },
+      },
+      { "<localleader>rc", function() require("quarto.runner").run_cell() end, desc = "Run cell", ft = { "markdown", "quarto" } },
+      { "<localleader>ra", function() require("quarto.runner").run_above() end, desc = "Run cell and above", ft = { "markdown", "quarto" } },
+      { "<localleader>rb", function() require("quarto.runner").run_below() end, desc = "Run cell and below", ft = { "markdown", "quarto" } },
+      { "<localleader>rA", function() require("quarto.runner").run_all() end, desc = "Run all cells", ft = { "markdown", "quarto" } },
+      { "<localleader>rl", function() require("quarto.runner").run_line() end, desc = "Run line", ft = { "markdown", "quarto" } },
+      { "]c", goto_cell("next"), desc = "Next cell", ft = { "markdown", "quarto" } },
+      { "[c", goto_cell("prev"), desc = "Previous cell", ft = { "markdown", "quarto" } },
+      {
+        "<localleader>cn",
+        function()
+          local lines = { "", "```python", "", "```", "" }
+          vim.fn.search("^```$", "W")
+          vim.api.nvim_put(lines, "l", true, false)
+          vim.cmd("normal! 3j")
+          vim.cmd("startinsert")
+        end,
+        desc = "New cell below",
+        ft = { "markdown", "quarto" },
+      },
+    },
+  },
+
+  -- pretty rendering of notebook prose: headings, code cells, tables, and
+  -- LaTeX math (via latex2text from the neovim venv)
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    opts = {
+      file_types = { "markdown", "quarto" },
+      latex = { enabled = true },
+      code = { width = "full", sign = false },
+      heading = { sign = false },
+    },
+  },
+
+  -- which-key labels for the notebook maps
+  {
+    "folke/which-key.nvim",
+    opts = {
+      spec = {
+        { "<localleader>m", group = "molten (kernel)" },
+        { "<localleader>r", group = "run (cells)" },
+        { "<localleader>c", group = "cell" },
+      },
+    },
+  },
+}
