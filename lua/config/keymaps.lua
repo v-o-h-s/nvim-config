@@ -23,5 +23,3 @@ vim.keymap.set("n", "<leader>cr", function()
   local out = vim.fn.expand("%:p:r")
   vim.cmd("vsplit | terminal g++ -std=c++17 -Wall -o '" .. out .. "' '" .. file .. "' && '" .. out .. "'")
 end, { desc = "Compile and run C++" })
-
-

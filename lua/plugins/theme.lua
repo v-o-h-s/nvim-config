@@ -5,8 +5,8 @@ return {
     name = "rose-pine",
     priority = 1000,
     opts = {
-      variant = "main",
-      dark_variant = "main",
+      variant = "moon",
+      dark_variant = "moon",
       dim_inactive_windows = false,
       styles = {
         bold = true,
@@ -35,8 +35,8 @@ return {
           hl(0, "LineNr", { fg = "#515763", bg = "NONE" })
           hl(0, "CursorLineNr", { fg = "#ffffff", bg = "NONE", bold = true })
           hl(0, "SignColumn", { bg = "NONE" })
-          -- lsp-lens virtual text: dim, unobtrusive
-          hl(0, "LspLens", { fg = "#515763", bg = "NONE", italic = false })
+          -- lsp-lens virtual text (reference/implementation counts): white-grey
+          hl(0, "LspLens", { fg = "#c8c8c8", bg = "NONE", italic = false })
           -- Pickers (telescope / snacks) follow the float glass look
           hl(0, "TelescopeBorder", { fg = "#b0b8c5", bg = "NONE" })
           hl(0, "TelescopeNormal", { bg = "NONE" })
