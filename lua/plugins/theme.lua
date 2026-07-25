@@ -37,6 +37,12 @@ return {
           hl(0, "SignColumn", { bg = "NONE" })
           -- lsp-lens virtual text (reference/implementation counts): white-grey
           hl(0, "LspLens", { fg = "#c8c8c8", bg = "NONE", italic = false })
+          -- Keywords
+          hl(0, "Keyword", { fg = "#e5c1bd" })
+          hl(0, "@keyword", { fg = "#e5c1bd" })
+          -- Variables
+          hl(0, "@variable", { fg = "#a3d9c9" })
+          hl(0, "@variable.builtin", { fg = "#f0a868" })
           -- Pickers (telescope / snacks) follow the float glass look
           hl(0, "TelescopeBorder", { fg = "#b0b8c5", bg = "NONE" })
           hl(0, "TelescopeNormal", { bg = "NONE" })
