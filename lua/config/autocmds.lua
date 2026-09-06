@@ -1,9 +1,9 @@
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
 
--- Auto-reload when returning to Neovim or after terminal commands
+-- Auto-reload when a file changes underneath us (agents editing files, git ops)
 vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
-  group = vim.api.nvim_create_augroup("opencode_autoread", { clear = true }),
+  group = vim.api.nvim_create_augroup("external_edit_autoread", { clear = true }),
   callback = function()
     if vim.fn.mode() ~= "c" then
       vim.cmd("checktime")

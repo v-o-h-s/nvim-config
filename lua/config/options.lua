@@ -5,7 +5,7 @@
 -- Auto-save: immediate on InsertLeave/FocusLost/BufLeave/exit, debounced while
 -- typing. A write per keystroke (the old behavior) also ran format-on-save and
 -- LSP didSave handlers on every single change, which made editing sluggish.
-local autosave = vim.api.nvim_create_augroup("opencode_autosave", { clear = true })
+local autosave = vim.api.nvim_create_augroup("buffer_autosave", { clear = true })
 local autosave_timers = {}
 
 local function autosave_write(buf)
