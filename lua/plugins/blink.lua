@@ -8,6 +8,20 @@ return {
     "saghen/blink.cmp",
     opts = {
       sources = {
+        -- Do not complete until there are three characters to go on.
+        --
+        -- Two reasons. The obvious one: typing `t` and being offered `tea`
+        -- from elsewhere in the buffer is noise, not help. The other is that
+        -- every triggering keystroke is an LSP round-trip, and on this machine
+        -- those are the expensive thing -- so not asking at all for one- and
+        -- two-character prefixes removes real work per keystroke.
+        --
+        -- Safe for `object.`: blink skips the *global* min_keyword_length
+        -- whenever the context came from a trigger character or a manual
+        -- <C-Space> (see should_show_items in sources/lib/provider/init.lua),
+        -- so member completion still fires immediately on the dot with an
+        -- empty keyword.
+        min_keyword_length = 3,
         providers = {
           lsp = {
             -- The real fix for "the menu takes seconds to appear". blink treats
